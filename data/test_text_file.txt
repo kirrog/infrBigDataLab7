@@ -1,0 +1,1 @@
+Spark RDD Transformations are lazy operations meaning they don’t execute until you call an action on RDD. Since RDDs are immutable, When you run a transformation(for example map()), instead of updating a current RDD, it returns a new RDD.

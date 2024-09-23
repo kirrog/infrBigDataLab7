@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  pyspark-app:
+    build: .
+    command: bash -c "sleep 60 && python -m scripts.run"
+    depends_on:
+      mssql-server:
+        condition: service_healthy
+    networks:
+      - sparknet
+
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "yourStrong(!)Password"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./data:/data
+      - ./sql:/sql
+    command: /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 && /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'yourStrong(!)Password' -i /sql/init.sql && tail -f /dev/null"
+    healthcheck:
+      test: "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'yourStrong(!)Password' -Q 'SELECT 1'"
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - sparknet
+
+networks:
+  sparknet:
+    driver: bridge
