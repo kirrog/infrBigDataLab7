@@ -5,18 +5,15 @@ import pyspark.sql
 from pyspark.ml.feature import StandardScaler, VectorAssembler
 from pyspark.sql import functions
 
-FEATURES_COLUMN = "scaled_feature"
+FEATURES_COLUMN = "scaled_features"
 logger = logging.Logger("preproc")
+
 
 class Preprocessor:
     def __init__(self, spark_cs: pyspark.sql.SparkSession, features_path: str):
         with open(features_path, "r") as features_file:
             self.features = json.load(features_file)
         self.spark = spark_cs
-
-    # def load_data(self, data_path: str) -> pyspark.sql.DataFrame:
-    #     df = self.spark.read.csv(data_path, header=True, inferSchema=True, encoding="utf-8")
-    #     return df
 
     def preprocess(self, df: pyspark.sql.DataFrame) -> pyspark.sql.DataFrame:
         id_columns = self.features["id"]

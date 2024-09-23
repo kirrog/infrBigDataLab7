@@ -41,3 +41,4 @@ class TrainConfig:
     spark: SparkConfig = SparkConfig()
     db: DatabaseConfig = DatabaseConfig()
     save_to: str = "models/food_cluster"
+    datamart: str = "jars/datamart.jar"
